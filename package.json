@@ -1,0 +1,52 @@
+{
+  "name": "apatite",
+  "version": "2.0.0",
+  "description": "Object persistence framework for Node.js. ORM framework supports: MySQL, Oracle, Postgres, SQL Server, Sqlite.",
+  "main": "index.js",
+  "author": {
+    "name": "Madhu",
+    "email": "pmadhur@gmail.com"
+  },
+  "license": "(MIT)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apatitejs/apatite"
+  },
+  "keywords": [
+    "apatite",
+    "orm",
+    "persistence",
+    "framework",
+    "mapping",
+    "object",
+    "oracle",
+    "postgres",
+    "mysql",
+    "sql server",
+    "ms sql",
+    "sqlite",
+    "sqlite3"
+  ],
+  "engines": {
+    "node": ">=12.13.1"
+  },
+  "files": [
+    "lib/",
+    "test/",
+    "LICENCE",
+    "index.js",
+    "README.md"
+  ],
+  "devDependencies": {
+    "mysql": "^2.17.1",
+    "njsunit": "^1.0.10",
+    "oracledb": "^4.1.0",
+    "pg": "^6.1.5",
+    "sqlite3": "^4.1.1",
+    "tedious": "^2.0.0",
+    "tedious-connection-pool": "^1.0.5"
+  },
+  "scripts": {
+    "test": "njsunit"
+  }
+}
