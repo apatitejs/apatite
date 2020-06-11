@@ -233,7 +233,9 @@ function endSession(session) {
 ...
 	// Change an existing department
 	var query = session.newQuery(Department);
-	query.attr('name').eq('Sales');
+    query.attr('name').eq('Sales');
+    // Or you could create query from an array
+    // const query = session.newQueryFromArray(Department, [['name', '=', 'Sales']])
 	query.execute(function(executeErr, departments) {
 		if (executeErr) {
 			return console.error(executeErr);
@@ -255,7 +257,9 @@ function endSession(session) {
 	// Delete an existing department
 	var changesToDo = function (changesDone) {
 		var query = session.newQuery(Department);
-		query.attr('name').eq('Pre-Sales');
+        query.attr('name').eq('Pre-Sales');
+        // Or you could create query from an array
+        // const query = session.newQueryFromArray(Department, [['name', '=', 'Pre-Sales']])
 		query.execute(function(executeErr, departments) {
 			if (executeErr) {
 				changesDone(executeErr);
