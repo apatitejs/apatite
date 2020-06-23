@@ -14,6 +14,14 @@ class ApatiteTestDialect extends ApatiteDialect {
         return new ApatiteTestConnection(this);
     }
 
+    buildSQLForTableExistence(tableName, bindVariables) {
+        return `SELECT * FROM USER_TABLES WHERE TABLE_NAME = ?`
+    }
+
+    buildSQLForTableColumnExistence(tableName, columnName, bindVariables) {
+        return 'SELECT * FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?'
+    }
+
     getApatiteResultSet(dbCursor) {
         return new ApatiteTestResultSet(dbCursor);
     }

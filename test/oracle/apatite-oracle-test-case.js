@@ -12,7 +12,17 @@ class ApatiteOracleTestCase extends ApatiteDialectTestCaseAbstract {
         var self = this
         this.doDMLExecutionTests(() => {
             self.doFailedSQLTests(() => {
-                self.doConnResultSetFailTests(onTestPerformed)
+                self.doConnResultSetFailTests(() => {
+                    self.apatiteSession.existsDBTable('DEPT', (existsErr, result) => {
+                        self.assertNullOrUndefined(existsErr, null, 'Table Existence Check: No error should occur when checking for table existence.')
+                        self.assertEqual(result.rows.length, 1, null, 'Table Existence Check: Since table DEPT exists, the result rows length should be 1.')
+                        self.apatiteSession.existsDBTableColumn('DEPT', 'NAME', (colExistsErr, colResult) => {
+                            self.assertNullOrUndefined(colExistsErr, null, 'Table Column Existence Check: No error should occur when checking for table column existence.')
+                            self.assertEqual(colResult.rows.length, 1, null, 'Table Column Existence Check: Since column NAME exists in table DEPT, the result rows length should be 1.')
+                            onTestPerformed()
+                        })
+                    })
+                })
             })
         })
     }
