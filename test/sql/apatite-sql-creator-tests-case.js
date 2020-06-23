@@ -24,9 +24,18 @@ class ApatiteSQLScriptCreatorTestCase extends TestCase {
 
                 script = session.createSQLScriptForAttribute('Pet', 'name')
                 self.assertEqual(script, 'ALTER TABLE PET ADD (NAME TEXT);')
-                session.end(function (endErr) {
-                    self.assertNullOrUndefined(endErr)
-                    onTestPerformed()
+
+                session.existsDBTable('FOOBAR', (existsErr, result) => {
+                    self.assertNullOrUndefined(existsErr, null, 'Table Existence: No error should occur when checking for table existence.')
+                    self.assertEqual(result.rows.length, 0, null, 'Table Existence: Since table FOOBAR does not exist, the result rows length should be 0.')
+                    session.existsDBTableColumn('FOOBAR', 'XYZ', (colExistsErr, colResult) => {
+                        self.assertNullOrUndefined(colExistsErr, null, 'Table Column Existence: No error should occur when checking for table column existence.')
+                        self.assertEqual(colResult.rows.length, 0, null, 'Table Column Existence: Since column XYZ does not exist, the result rows length should be 0.')
+                        session.end(function (endErr) {
+                            self.assertNullOrUndefined(endErr)
+                            onTestPerformed()
+                        })
+                    })
                 })
             })
         }
@@ -49,9 +58,18 @@ class ApatiteSQLScriptCreatorTestCase extends TestCase {
 
                 script = session.createSQLScriptForAttribute('Pet', 'name')
                 self.assertEqual(script, 'ALTER TABLE PET ADD (NAME VARCHAR (100));')
-                session.end(function (endErr) {
-                    self.assertNullOrUndefined(endErr)
-                    onTestPerformed()
+
+                session.existsDBTable('FOOBAR', (existsErr, result) => {
+                    self.assertNullOrUndefined(existsErr, null, 'Table Existence: No error should occur when checking for table existence.')
+                    self.assertEqual(result.rows.length, 0, null, 'Table Existence: Since table FOOBAR does not exist, the result rows length should be 0.')
+                    session.existsDBTableColumn('FOOBAR', 'XYZ', (colExistsErr, colResult) => {
+                        self.assertNullOrUndefined(colExistsErr, null, 'Table Column Existence: No error should occur when checking for table column existence.')
+                        self.assertEqual(colResult.rows.length, 0, null, 'Table Column Existence: Since column XYZ does not exist, the result rows length should be 0.')
+                        session.end(function (endErr) {
+                            self.assertNullOrUndefined(endErr)
+                            onTestPerformed()
+                        })
+                    })
                 })
             })
         }
@@ -74,9 +92,14 @@ class ApatiteSQLScriptCreatorTestCase extends TestCase {
 
                 script = session.createSQLScriptForAttribute('Pet', 'name')
                 self.assertEqual(script, 'ALTER TABLE PET ADD (NAME VARCHAR (100));')
-                session.end(function (endErr) {
-                    self.assertNullOrUndefined(endErr)
-                    onTestPerformed()
+
+                session.existsDBTable('FOOBAR', (existsErr, result) => {
+                    self.assertNullOrUndefined(existsErr, null, 'Table Existence: No error should occur when checking for table existence.')
+                    self.assertEqual(result.rows.length, 0, null, 'Table Existence: Since table FOOBAR does not exist, the result rows length should be 0.')
+                    session.end(function (endErr) {
+                        self.assertNullOrUndefined(endErr)
+                        onTestPerformed()
+                    })
                 })
             })
         }
@@ -99,9 +122,18 @@ class ApatiteSQLScriptCreatorTestCase extends TestCase {
 
                 script = session.createSQLScriptForAttribute('Pet', 'name')
                 self.assertEqual(script, 'ALTER TABLE PET ADD (NAME VARCHAR (100));')
-                session.end(function (endErr) {
-                    self.assertNullOrUndefined(endErr)
-                    onTestPerformed()
+
+                session.existsDBTable('FOOBAR', (existsErr, result) => {
+                    self.assertNullOrUndefined(existsErr, null, 'Table Existence: No error should occur when checking for table existence.')
+                    self.assertEqual(result.rows.length, 0, null, 'Table Existence: Since table FOOBAR does not exist, the result rows length should be 0.')
+                    session.existsDBTableColumn('FOOBAR', 'XYZ', (colExistsErr, colResult) => {
+                        self.assertNullOrUndefined(colExistsErr, null, 'Table Column Existence: No error should occur when checking for table column existence.')
+                        self.assertEqual(colResult.rows.length, 0, null, 'Table Column Existence: Since column XYZ does not exist, the result rows length should be 0.')
+                        session.end(function (endErr) {
+                            self.assertNullOrUndefined(endErr)
+                            onTestPerformed()
+                        })
+                    })
                 })
             })
         }
@@ -132,9 +164,32 @@ class ApatiteSQLScriptCreatorTestCase extends TestCase {
 
                 script = session.createSQLScriptForAttribute('Pet', 'name')
                 self.assertEqual(script, 'ALTER TABLE PET ADD (NAME VARCHAR2 (100));')
-                session.end(function (endErr) {
-                    self.assertNullOrUndefined(endErr)
-                    onTestPerformed()
+
+                let stmt = session.getSQLScriptCreator().createStatementForTableExistence('FOOBAR')
+                self.assertEqual(stmt.sqlString, 'SELECT * FROM USER_TABLES WHERE TABLE_NAME = :V1', null, 'Table Existence: Formed sql should be as expected.')
+                self.assertEqual(stmt.bindings.length, 1, null, 'Table Existence: Only one binding variable containing the table name should exist.')
+                self.assertEqual(stmt.bindings[0].getVariableName(), ':V1', null, 'Table Existence: Bind variable name should be :V1.')
+                self.assertEqual(stmt.bindings[0].variableValue, 'FOOBAR', null, 'Table Existence: Bind variable value should be FOOBAR.')
+
+                stmt = session.getSQLScriptCreator().createStatementForTableColumnExistence('FOOBAR', 'XYZ')
+                self.assertEqual(stmt.sqlString, 'SELECT * FROM USER_TAB_COLUMNS WHERE TABLE_NAME = :V1 AND COLUMN_NAME = :V2', null, 'Table Column Existence: Formed sql should be as expected.')
+                self.assertEqual(stmt.bindings.length, 2, null, 'Table Column Existence: Two binding variables containing the table and column name should exist.')
+                self.assertEqual(stmt.bindings[0].getVariableName(), ':V1', null, 'Table Column Existence: First bind variable name should be :V1.')
+                self.assertEqual(stmt.bindings[1].getVariableName(), ':V2', null, 'Table Column Existence: Second bind variable name should be :V2.')
+                self.assertEqual(stmt.bindings[0].variableValue, 'FOOBAR', null, 'Table Column Existence: First bind variable value should be FOOBAR.')
+                self.assertEqual(stmt.bindings[1].variableValue, 'XYZ', null, 'Table Column Existence: Second bind variable value should be XYZ.')
+
+                session.existsDBTable('FOOBAR', (existsErr, result) => {
+                    self.assertNullOrUndefined(existsErr, null, 'Table Existence: No error should occur when checking for table existence.')
+                    self.assertEqual(result.rows.length, 0, null, 'Table Existence: Since table FOOBAR does not exist, the result rows length should be 0.')
+                    session.existsDBTableColumn('FOOBAR', 'XYZ', (colExistsErr, colResult) => {
+                        self.assertNullOrUndefined(colExistsErr, null, 'Table Column Existence: No error should occur when checking for table column existence.')
+                        self.assertEqual(colResult.rows.length, 0, null, 'Table Column Existence: Since column XYZ does not exist, the result rows length should be 0.')
+                        session.end(function (endErr) {
+                            self.assertNullOrUndefined(endErr)
+                            onTestPerformed()
+                        })
+                    })
                 })
             })
         }
@@ -197,12 +252,25 @@ class ApatiteSQLScriptCreatorTestCase extends TestCase {
             })
 
             var promise
+
+            promise = session.existsDBTable('FOOBAR')
+            promise
+            .then(function(result){self.assertEqual(0, result.rows.length)}, function(promiseErr){throw new Error('Not expected to reach here.')})
+
             session.connection.isDDLSqlPromiseTest = true
             promise = session.createDBTablesForAllModels()
             promise
             .then(function(result){return session.createDBTableForModel('Pet')}, function(promiseErr){self.assertNullOrUndefined(promiseErr)})
             .then(function(result){return session.createDBColumnForAttribute('Pet', 'oid')}, function(promiseErr){self.assertNullOrUndefined(promiseErr)})
             .then(function(result){return session.createDBColumnForAttribute('Pet', 'name')}, function(promiseErr){self.assertNullOrUndefined(promiseErr)})
+            .then(function(result){throw new Error('Not expected to reach here.')}, function(promiseErr){self.assertEqual(promiseErr.message, 'SQL execution failed.')})
+
+            promise = session.existsDBTableColumn('FOOBAR', 'XYZ')
+            promise
+            .then(function(result){throw new Error('Not expected to reach here.')}, function(promiseErr){self.assertEqual(promiseErr.message, 'SQL execution failed.')})
+
+            promise = session.existsDBTable('FOOBAR')
+            promise
             .then(function(result){throw new Error('Not expected to reach here.')}, function(promiseErr){self.assertEqual(promiseErr.message, 'SQL execution failed.'); onTestPerformed()})
         })
     }

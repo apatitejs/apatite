@@ -167,6 +167,16 @@ class ApatiteTestConnection extends ApatiteConnection {
                 setTimeout(function () {
                     onExecuted(new Error('SQL execution failed.'));
                 }, 5);
+            } else if (sqlStr === 'SELECT * FROM USER_TABLES WHERE TABLE_NAME = ?') {
+                // setTimeout required for promise tests
+                setTimeout(function () {
+                    onExecuted(new Error('SQL execution failed.'));
+                }, 5);
+            } else if (sqlStr === 'SELECT * FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?') {
+                // setTimeout required for promise tests
+                setTimeout(function () {
+                    onExecuted(new Error('SQL execution failed.'));
+                }, 5);
             }
             else {
                 // setTimeout required for promise tests
@@ -175,6 +185,13 @@ class ApatiteTestConnection extends ApatiteConnection {
                 }, 5);
             }
             return;
+        }
+        if (sqlStr === 'SELECT * FROM USER_TABLES WHERE TABLE_NAME = ?') {
+            // setTimeout required for promise tests
+            setTimeout(function () {
+                onExecuted(null, {rows: []});
+            }, 5);
+            return
         }
 
         var bindings = this.buildBindVariableValues(bindVariables);
