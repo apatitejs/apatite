@@ -277,6 +277,100 @@ function endSession(session) {
 ...
 ```
 
+* Below is a complete example which can be run multiple times. All you need to do is create a postgres DB with user name/db name/password as apatite
+
+```js
+const connOptions = { userName: 'apatite', password: 'apatite', connectionInfo: 'localhost/apatite' }
+
+const apatite = require('apatite').forPostgres(connOptions)
+
+class Department {
+    constructor() {
+        this.oid = 0
+        this.name = ''
+    }
+
+    printName() {
+        console.log(this.name)
+    }
+
+    static getModelDescriptor(apatite) {
+        const table = apatite.newTable('DEPT')
+        const modelDescriptor = apatite.newModelDescriptor(this, table)
+
+        let column = table.addNewColumn('OID', apatite.dialect.newSerialType())
+        column.bePrimaryKey()
+        modelDescriptor.newSimpleMapping('oid', column)
+
+        column = table.addNewColumn('NAME', apatite.dialect.newVarCharType(100))
+        modelDescriptor.newSimpleMapping('name', column)
+
+        return modelDescriptor
+    }
+}
+
+apatite.registerModel(Department)
+
+apatite.newSession((sessionErr, session) => {
+    if (sessionErr) {
+        return console.error(sessionErr)
+    }
+    session.existsDBTable('dept', (existsErr, tableInfo) => {
+        if (existsErr) {
+            endSession(session)
+            return console.error(existsErr)
+        }
+        if (tableInfo.rows.length === 0) {
+            session.createDBTablesForAllModels((creationErr) => {
+                if (creationErr) {
+                    return console.error(creationErr)
+                }
+                createDepartments(session)
+            })
+        } else {
+            queryDepartments(session)
+        }
+    })
+})
+
+function createDepartments(session) {
+    let changesToDo = (changesDone) => {
+        for(let i = 0; i < 50; i++) {
+            let department = new Department()
+            department.name = `Department ${`000${i + 1}`.slice(-3)}`
+            session.registerNew(department)
+        }
+        changesDone()
+    }
+    session.doChangesAndSave(changesToDo, (saveErr) => {
+        if (saveErr) {
+            endSession(session)
+            return console.error(saveErr)
+        }
+        queryDepartments(session)
+    })
+}
+
+function queryDepartments(session) {
+    const query = session.newQueryFromArray(Department, [['oid', '>', 0]])
+    query.execute((executeErr, departments) => {
+        if (executeErr) {
+            console.error(executeErr)
+        }
+        console.log(JSON.stringify(departments))
+        endSession(session)
+    })
+}
+
+function endSession(session) {
+    session.end((endSessionErr) => {
+        if (endSessionErr) {
+            console.error(endSessionErr)
+        }
+    })
+}
+```
+
 ## Contributions
 
 Welcome.
